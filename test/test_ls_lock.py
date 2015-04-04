@@ -34,7 +34,8 @@ class TestLsLock(unittest.TestCase):
             if l:
                 ls = l.strip()
                 pid = ls.split(" ")[0].strip()
-                if int(pid) == my_pid:
+                fn = ls.split(" ")[1].strip() 
+                if int(pid) == my_pid and fn == filename:
                     is_found = True
         self.assertTrue(is_found)
 
