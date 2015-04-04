@@ -34,6 +34,7 @@ do
     lock_file=${inode_file#*.}
     # inode="12848"  
     if [ "${index_flock_inodes[$inode]}" ]; then 
+        # IMPROVEMENT: create a IDX from lsof output
         pid=$(lsof  | grep  ${lock_file}  | cut -d' ' -f2)
         printf "%10s %s\n" ${pid} ${lock_file}
     fi     
