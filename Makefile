@@ -20,9 +20,11 @@ virtualenv_install_test_packages:
 
 
 # How to use it:
-# make infinitest NOSETEST=test-integration/minion/test_cpu_freq_governor.py
 infinitest:
 	while true; do nosetests --nocapture $(NOSETEST); sleep 1; done
+
+nose_test:
+	nosetests --nocapture test/
 
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"

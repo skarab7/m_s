@@ -26,7 +26,7 @@ inode_of_flocks=( $(cat /proc/locks  | grep FLOCK | cut -d' ' -f8 | cut -d':' -f
 
 make_flock_index "${inode_of_flocks[@]}"
 
-printf "%10s %s" "PID" "Lockedfile";
+printf "%10s %s\n" "PID" "Lockedfile";
 
 for inode_file in "${inode_file_pairs[@]}"
 do
