@@ -12,7 +12,7 @@ class TestLsLock(unittest.TestCase):
     """
     TEST_TMP_DIR = "/tmp"
     LOCK_FILE_PREFIX = "lslock-test"
-    LS_LOCK_EXEC="bash ls_lock.sh"
+    LS_LOCK_EXEC = "bash ls_lock.sh"
 
     def test_when_twoLockFileExist_then_printLocks(self):
         """
@@ -25,10 +25,9 @@ class TestLsLock(unittest.TestCase):
         with open(filename, "r+") as f:
             fcntl.flock(f.fileno(), fcntl.LOCK_EX)
             output = self._get_output_ls_lock(TestLsLock.TEST_TMP_DIR)
-            # time.sleep(190)       
- 
+
         self._delete_file_if_exists(filename)
-        lines = output.split("\n")[1:]       
+        lines = output.split("\n")[1:]  # skip the header
         is_found = False
         # TODO: add check for the filename as well
         for l in lines:
@@ -37,7 +36,7 @@ class TestLsLock(unittest.TestCase):
                 pid = ls.split(" ")[0].strip()
                 if int(pid) == my_pid:
                     is_found = True
-        self.assertTrue(is_found) 
+        self.assertTrue(is_found)
 
     def _create_file_if_not_exist(self, filename):
         if not os.path.exists(filename):
@@ -51,10 +50,9 @@ class TestLsLock(unittest.TestCase):
         cmd = TestLsLock.LS_LOCK_EXEC.split()
         cmd.append(target_dir)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        output = process.communicate()[0] 
+        output = process.communicate()[0]
         return output.strip()
 
     def _delete_file_if_exists(self, filename):
         if(os.path.isfile(filename)):
             os.remove(filename)
-
