@@ -22,7 +22,7 @@ make_flock_index () {
 }
 
 inode_file_pairs=( $(find ${target_dir} -name "*" | xargs -I {} stat --printf="%i,{}\n" {} | sort) )
-inode_of_flocks=( $(cat /proc/locks  | grep FLOCK | cut -d' ' -f8 | cut -d':' -f3 | sort) )
+inode_of_flocks=( $(cat /proc/locks  | grep FLOCK | awk '{print $6}' | cut -d':' -f3 | sort) )
 
 make_flock_index "${inode_of_flocks[@]}"
 
@@ -32,10 +32,7 @@ for inode_file in "${inode_file_pairs[@]}"
 do
     inode=${inode_file%,*}  
     lock_file=${inode_file#*,}
-    # inode="12848"  
     if [ "${index_flock_inodes[$inode]}" ]; then 
-        # IMPROVEMENT: create a IDX from lsof output
-        pid=$(lsof | grep "${lock_file}" | awk '{print $2}')
-        printf "%10s %s\n" ${pid} ${lock_file}
+        lsof | grep "${lock_file}" | awk '{print $2}' | xargs -I {} printf "%10s %s\n" {} ${lock_file}
     fi     
 done
