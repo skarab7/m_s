@@ -31,11 +31,11 @@ printf "%10s %s\n" "PID" "Lockedfile";
 for inode_file in "${inode_file_pairs[@]}"
 do
     inode=${inode_file%,*}  
-    lock_file=${inode_file#*.}
+    lock_file=${inode_file#*,}
     # inode="12848"  
     if [ "${index_flock_inodes[$inode]}" ]; then 
         # IMPROVEMENT: create a IDX from lsof output
-        pid=$(lsof  | grep  ${lock_file}  | cut -d' ' -f2)
+        pid=$(lsof | grep "${lock_file}" | awk '{print $2}')
         printf "%10s %s\n" ${pid} ${lock_file}
     fi     
 done
