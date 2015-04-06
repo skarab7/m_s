@@ -36,11 +36,11 @@ class TestLsLock(unittest.TestCase):
             if l:
                 ls = l.strip()
                 pid = ls.split(" ")[0].strip()
-                fn = ls.split(" ")[1].strip() 
+                fn = ls.split(" ")[1].strip()
                 if int(pid) == my_pid and fn == filename:
                     is_found = True
                 if int(pid) == subpid and fn == filename:
-                    is_sub_process_found  = True
+                    is_sub_process_found = True
         self.assertTrue(is_found)
         self.assertTrue(is_sub_process_found)
 
@@ -58,7 +58,7 @@ class TestLsLock(unittest.TestCase):
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         output = process.communicate()[0]
         return output.strip(), process.pid
-    
+
     def _delete_file_if_exists(self, filename):
         if(os.path.isfile(filename)):
             os.remove(filename)
