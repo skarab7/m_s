@@ -14,7 +14,7 @@ class TestLsLock(unittest.TestCase):
     LOCK_FILE_PREFIX = "lslock-test"
     LS_LOCK_EXEC = "bash ls_lock.sh"
 
-    def test_when_twoLockFileExist_then_printLocks(self):
+    def test_when_oneLockFileExist_then_printLockHoldBySubprocesses(self):
         """
         given: two processes are holding lock
         """
@@ -22,21 +22,27 @@ class TestLsLock(unittest.TestCase):
         self._create_file_if_not_exist(filename)
         my_pid = os.getpid()
         output = None
+        subpid = None
+
         with open(filename, "r+") as f:
             fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-            output = self._get_output_ls_lock(TestLsLock.TEST_TMP_DIR)
+            output, subpid = self._get_output_ls_lock(TestLsLock.TEST_TMP_DIR)
 
         self._delete_file_if_exists(filename)
         lines = output.split("\n")[1:]  # skip the header
         is_found = False
-        # TODO: add check for the filename as well
+        is_subprocess_found = False
         for l in lines:
             if l:
                 ls = l.strip()
                 pid = ls.split(" ")[0].strip()
-                if int(pid) == my_pid:
+                fn = ls.split(" ")[1].strip()
+                if int(pid) == my_pid and fn == filename:
                     is_found = True
+                if int(pid) == subpid and fn == filename:
+                    is_sub_process_found = True
         self.assertTrue(is_found)
+        self.assertTrue(is_sub_process_found)
 
     def _create_file_if_not_exist(self, filename):
         if not os.path.exists(filename):
@@ -51,7 +57,7 @@ class TestLsLock(unittest.TestCase):
         cmd.append(target_dir)
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
         output = process.communicate()[0]
-        return output.strip()
+        return output.strip(), process.pid
 
     def _delete_file_if_exists(self, filename):
         if(os.path.isfile(filename)):
