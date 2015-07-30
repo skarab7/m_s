@@ -63,7 +63,6 @@ func get_indes_used_in_flocks(os_lock_file string) ([]uint64, error) {
 			fields := strings.Split(l, " ")
 			if fields[FIELD_NUM_LC_TYPE] == FLOCK {
 				inode := fields[FIELD_NUM_INODE]
-				fmt.Printf("%v\n", inode)
 				v, err := strconv.Atoi(inode)
 				if err != nil {
 					return nil, err
@@ -92,12 +91,13 @@ func main() {
 	}
 	collector, _ := get_inodes_in_directory(target_dir)
 	inodes, _ := get_indes_used_in_flocks("example.txt")
+	// merge sort would be the way to go
+
 	for _, i := range inodes {
 
 		if len(collector.inode_to_file[i]) != 0 {
-			// DO STH
-		} else {
-			// DO STH ELESE
+			i_to_f := collector.inode_to_file[i]
+			fmt.Println("Path: ", i_to_f, " INODE: ", i)
 		}
 	}
 }
