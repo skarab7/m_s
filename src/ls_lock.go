@@ -96,8 +96,8 @@ func main() {
 	for _, i := range inodes {
 
 		if len(collector.iNodeToFile[i]) != 0 {
-			i_to_f := collector.iNodeToFile[i]
-			fmt.Println("Path: ", i_to_f, " INODE: ", i)
+			i2f := collector.iNodeToFile[i]
+			fmt.Println("Path: ", i2f, " INODE: ", i)
 		}
 	}
 }
