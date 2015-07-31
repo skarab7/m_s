@@ -17,19 +17,19 @@ const FIELD_NUM_INODE = 6
 const FLOCK string = "FLOCK"
 
 type FileInodeCollector struct {
-	inode_to_file map[uint64]string
+	iNodeToFile map[uint64]string
 }
 
 func GetInodesInDirectory(target_dir string) (FileInodeCollector, error) {
 	var i FileInodeCollector
-	i.inode_to_file = make(map[uint64]string)
+	i.iNodeToFile = make(map[uint64]string)
 	err := filepath.Walk(target_dir, i.ExtractInode)
 	return i, err
 }
 
 func (in *FileInodeCollector) ExtractInode(path string, f os.FileInfo, err error) error {
 	stat, _ := f.Sys().(*syscall.Stat_t)
-	in.inode_to_file[stat.Ino] = path
+	in.iNodeToFile[stat.Ino] = path
 	return nil
 }
 
@@ -83,20 +83,20 @@ func ExitIfError(e error) {
 }
 
 func main() {
-	var target_dir string
-	target_dir, status := GetTargetDirectory()
+	var targetDir string
+	targetDir, status := GetTargetDirectory()
 	if status != 0 {
 		fmt.Printf("Provide target dir\n")
 		os.Exit(status)
 	}
-	collector, _ := GetInodesInDirectory(target_dir)
+	collector, _ := GetInodesInDirectory(targetDir)
 	inodes, _ := GetFlocksInodes("example.txt")
 	// merge sort would be the way to go
 
 	for _, i := range inodes {
 
-		if len(collector.inode_to_file[i]) != 0 {
-			i_to_f := collector.inode_to_file[i]
+		if len(collector.iNodeToFile[i]) != 0 {
+			i_to_f := collector.iNodeToFile[i]
 			fmt.Println("Path: ", i_to_f, " INODE: ", i)
 		}
 	}
