@@ -11,10 +11,10 @@ import (
 	"syscall"
 )
 
-const LOCK_PROC_FILE string = "/proc/locks"
-const FIELD_NUM_LC_TYPE int32 = 1
-const FIELD_NUM_INODE = 6
-const FLOCK string = "FLOCK"
+const ProcLocksFile string = "/proc/locks"
+const FieldNumLockType int32 = 1
+const FieldNumINode = 6
+const FileLockName string = "FLOCK"
 
 type FileInodeCollector struct {
 	iNodeToFile map[uint64]string
@@ -61,8 +61,8 @@ func GetFlocksInodes(os_lock_file string) ([]uint64, error) {
 	for _, l := range lines {
 		if len(l) > 0 {
 			fields := strings.Split(l, " ")
-			if fields[FIELD_NUM_LC_TYPE] == FLOCK {
-				inode := fields[FIELD_NUM_INODE]
+			if fields[FieldNumLockType] == FileLockName {
+				inode := fields[FieldNumINode]
 				v, err := strconv.Atoi(inode)
 				if err != nil {
 					return nil, err
