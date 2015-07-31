@@ -20,10 +20,10 @@ type FileInodeCollector struct {
 	iNodeToFile map[uint64]string
 }
 
-func GetInodesInDirectory(target_dir string) (FileInodeCollector, error) {
+func GetInodesInDirectory(targetDir string) (FileInodeCollector, error) {
 	var i FileInodeCollector
 	i.iNodeToFile = make(map[uint64]string)
-	err := filepath.Walk(target_dir, i.ExtractInode)
+	err := filepath.Walk(targetDir, i.ExtractInode)
 	return i, err
 }
 
@@ -47,9 +47,9 @@ func GetTargetDirectory() (string, int) {
 
 // Complexity
 // O(n)
-func GetFlocksInodes(os_lock_file string) ([]uint64, error) {
+func GetFlocksInodes(osLockFile string) ([]uint64, error) {
 
-	d, e := ioutil.ReadFile(os_lock_file)
+	d, e := ioutil.ReadFile(osLockFile)
 	ExitIfError(e)
 	lines := strings.Split(string(d), "\n")
 
