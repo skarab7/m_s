@@ -96,7 +96,7 @@ func findLockedPaths(inodes []uint64, inodeToFile map[uint64]string)  map[string
 	return r
 }
 
-func main() {
+func Main() {
 	var targetDir string
 	targetDir, status := GetTargetDirectory()
 	if status != 0 {
