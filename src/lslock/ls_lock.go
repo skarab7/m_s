@@ -1,4 +1,4 @@
-package main
+package lslock
 
 import (
 	"flag"
@@ -47,11 +47,8 @@ func GetTargetDirectory() (string, int) {
 
 // Complexity
 // O(n)
-func GetFlocksInodes(osLockFile string) ([]uint64, error) {
-
-	d, e := ioutil.ReadFile(osLockFile)
-	ExitIfError(e)
-	lines := strings.Split(string(d), "\n")
+func GetFlocksInodes(content string) ([]uint64, error) {
+	lines := strings.Split(content, "\n")
 
 	// ensure that we do not need to reallocate
 	// trade memory for complexity
@@ -76,13 +73,30 @@ func GetFlocksInodes(osLockFile string) ([]uint64, error) {
 	return lockedInodes, nil
 }
 
+func GetLockFileContent() (string, error) {
+	d, e := ioutil.ReadFile(ProcLocksFile)
+	return string(d), e
+}
+
 func ExitIfError(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
-func main() {
+func findLockedPaths(inodes []uint64, inodeToFile map[uint64]string)  map[string]uint64 {
+	var r map[string] uint64 = make(map[string]uint64)
+	// merge sort would be the way to go
+	for _, i := range inodes {
+		if len(inodeToFile[i]) != 0 {
+			i2f := inodeToFile[i]
+			r[i2f] = i
+		}
+	}
+	return r
+}
+
+func Main() {
 	var targetDir string
 	targetDir, status := GetTargetDirectory()
 	if status != 0 {
@@ -90,14 +104,13 @@ func main() {
 		os.Exit(status)
 	}
 	collector, _ := GetInodesInDirectory(targetDir)
-	inodes, _ := GetFlocksInodes("example.txt")
-	// merge sort would be the way to go
+	lockFileContent, e := GetLockFileContent()
+	ExitIfError(e)
+	inodes, _ := GetFlocksInodes(lockFileContent)
 
-	for _, i := range inodes {
+	lockedPaths := findLockedPaths(inodes, collector.iNodeToFile)
 
-		if len(collector.iNodeToFile[i]) != 0 {
-			i2f := collector.iNodeToFile[i]
-			fmt.Println("Path: ", i2f, " INODE: ", i)
-		}
+	for path, inode := range lockedPaths {
+		fmt.Println("Path: ", path, " INODE: ", inode)
 	}
 }
