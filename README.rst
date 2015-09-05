@@ -9,3 +9,10 @@ Development
 ===========
 
 TBA
+
+Run
+===
+
+.. code:: bash
+
+  go run src/lslock.go
